@@ -1,7 +1,8 @@
+using Domain.Interfaces;
 using Infrastructure;
-using Infrastructure.Interfaces;
 using Scalar.AspNetCore;
 using StackExchange.Redis;
+using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,5 +33,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
 app.Run();

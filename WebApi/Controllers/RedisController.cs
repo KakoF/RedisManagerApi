@@ -1,6 +1,7 @@
-using Infrastructure.Interfaces;
+using Domain.Interfaces;
+using Domain.Models;
+using Domain.Records.Requests;
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
 
 namespace WebApi.Controllers
 {
@@ -17,31 +18,28 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetKeys()
+        public async Task<IEnumerable<KeyModel>> GetAsync([FromQuery] FilterKeys filter)
         {
-            var keys = await _redis.GetAllKeysWithTTLsAsync();
-
-            return Ok(keys);
+            return await _redis.GetAsync(filter);
         }
 
         [HttpGet("{key}")]
-        public async Task<IActionResult> GetValue(string key)
+        public async Task<KeyValueModel> GetValue(string key)
         {
-            var redisKey = await _redis.GetValueAsync(key);
-            return Ok(redisKey);
+            return await _redis.GetAsync(key);
         }
 
         [HttpPost]
         public async Task<IActionResult> SetValue(string key, string value, int ttlSeconds = 0)
         {
-            await _redis.SetValueAsync(key, value, ttlSeconds);
+            await _redis.SetAsync(key, value, ttlSeconds);
             return Ok();
         }
 
         [HttpDelete("{key}")]
         public async Task<IActionResult> DeleteKey(string key)
         {
-            await _redis.DeleteKeyAsync(key);
+            await _redis.DeleteAsync(key);
             return Ok();
         }
     }
