@@ -1,17 +1,30 @@
 using Domain.Interfaces;
 using Infrastructure;
 using Scalar.AspNetCore;
-using StackExchange.Redis;
 using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    RedisConnectionFactory.Create(builder.Configuration.GetSection("Redis")["ConnectionString"]!));
+var redisConnectionString = builder.Configuration.GetSection("Redis")["ConnectionString"]!;
+
+builder.Services.AddSingleton(sp =>
+    RedisConnectionFactory.Create(redisConnectionString));
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnectionString;
+    options.InstanceName = "RedisManagerApi:";
+});
 
 // Injeta o repositório
-builder.Services.AddScoped<IRedisRepository, RedisRepository>();
+builder.Services.AddScoped<ICacheRepository, CacheRepository>();
 
+/*builder.Services.AddHealthChecks()
+    .AddRedis(
+        redisConnectionString: builder.Configuration.GetConnectionString("Redis"),
+        name: "redis",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: new[] { "cache", "infra" }
+    );*/
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

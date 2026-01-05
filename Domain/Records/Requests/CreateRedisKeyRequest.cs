@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Domain.Records.Requests
 {
-	public record CreateKeyValue(string Key, object Value, int TtlSeconds = 0);
+	public record CreateRedisKeyRequest(string Key, string Value, string Pattern, int? TtlSeconds = 0);
 }
