@@ -7,7 +7,7 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<KeyModel>> GetAsync(FilterKeys filter);
         Task<KeyValueModel> GetAsync(string key);
-        Task SetAsync(string key, string value, int ttlSeconds = 0);
+        Task SetAsync(CreateKeyValue request);
         Task DeleteAsync(string key);
     }
 }

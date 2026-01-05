@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.Records.Requests;
+using Infrastructure.Strategy;
 using StackExchange.Redis;
 
 namespace Infrastructure
@@ -48,11 +49,13 @@ namespace Infrastructure
         }
 
         
-        public async Task SetAsync(string key, string value, int ttlSeconds = 0)
+        public async Task SetAsync(CreateKeyValue request)
         {
             var db = _redis.GetDatabase();
-            TimeSpan? expiry = TimeSpan.FromSeconds(ttlSeconds);
-            await db.StringSetAsync(key, value, (Expiration)expiry);
+            var strategy = RedisSaveStrategyFactory.GetStrategy(request.Value);
+            TimeSpan expiry = TimeSpan.FromSeconds(request.TtlSeconds);
+            await strategy.SaveAsync(db, request.Key, request.Value, expiry);
+        
         }
 
         public async Task DeleteAsync(string key)

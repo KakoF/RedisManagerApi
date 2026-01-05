@@ -30,9 +30,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetValue(string key, string value, int ttlSeconds = 0)
+        public async Task<IActionResult> SetValue([FromBody] CreateKeyValue request)
         {
-            await _redis.SetAsync(key, value, ttlSeconds);
+            await _redis.SetAsync(request);
             return Ok();
         }
 
