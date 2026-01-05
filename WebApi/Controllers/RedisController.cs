@@ -21,24 +21,11 @@ namespace WebApi.Controllers
         [HttpGet("{key}")]
         [ProducesResponseType(typeof(RedisKeyModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetKey(string key)
+        public async Task<RedisKeyModel> GetKey(string key)
         {
-            try
-            {
-                var result = await _redis.GetKeyDetailsAsync(key);
-
-                if (!result.Exists)
-                    return NotFound(new { key, message = "Key not found" });
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return await _redis.GetKeyDetailsAsync(key);
         }
 
-        // GET api/redis - Listar chaves com filtro
         [HttpGet]
         [ProducesResponseType(typeof(RedisKeysListResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetKeys(

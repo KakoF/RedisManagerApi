@@ -2,7 +2,7 @@
 
 namespace Domain.Records.Response
 {
-    public class RedisKeysListResponse
+    public record RedisKeysListResponse
     {
         public List<RedisKeyModel> Keys { get; set; } = new();
         public int TotalCount { get; set; }
